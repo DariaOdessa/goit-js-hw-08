@@ -10,34 +10,45 @@ const emailInputRef = document.querySelector('.feedback-form input')
 formRef.addEventListener('submit', onFormSubmit);
 formRef.addEventListener('input', throttle(onFormInput, 500));
 
-const formData = {};
 
 getLocalStorageData();
 
-function onFormInput(evt) {
-
-    formData[evt.target.name] = evt.target.value;
-    const localStorageData = JSON.stringify(formData);
-    localStorage.setItem(FEEDBACK_KEY, localStorageData); 
+function onFormInput() {
+  const email = emailInputRef.value;
+  const message = textareaRef.value;
+  const localStorageData = JSON.stringify({email, message});
+  localStorage.setItem(FEEDBACK_KEY, localStorageData); 
+  
 }
 
 
 function onFormSubmit(evt) {
-    evt.preventDefault();
-    console.log(formData);
-    evt.currentTarget.reset();
-    localStorage.removeItem(FEEDBACK_KEY);
-}
+  evt.preventDefault();
+  const formElements = evt.currentTarget.elements;
+  const email = formElements.email.value;
+  const message = formElements.message.value;
 
-function getLocalStorageData() {
-    const savedData = localStorage.getItem(FEEDBACK_KEY);
-    const parsedData = JSON.parse(savedData);
-
-  if (savedData) {
-    emailInputRef.value = parsedData.email;
-    textareaRef.value = parsedData.message;
+  if (!email || !message) {
+    alert `Заполните все поля формы!`
   }
-}
+  const userData = {
+    email,
+    message
+  };
+  console.log(userData);
+  localStorage.removeItem(FEEDBACK_KEY);
+  evt.currentTarget.reset();
+  
+  } 
+    
 
 
+function getLocalStorageData() {  
+  const savedData = localStorage.getItem(FEEDBACK_KEY);
+  const parsedData = JSON.parse(savedData);
 
+  if (parsedData) {
+    textareaRef.value = parsedData.message;
+    emailInputRef.value = parsedData.email}
+  
+  } 
